@@ -1,4 +1,4 @@
-package graou.graph;
+package game.graph;
 
 /**
  * Classe de création des arêtes pour les graphes

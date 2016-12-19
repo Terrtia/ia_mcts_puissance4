@@ -1,4 +1,4 @@
-package graou.graph;
+package game.graph;
 
 import java.util.ArrayList;
 import java.util.Collections;
