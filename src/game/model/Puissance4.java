@@ -2,16 +2,19 @@ package game.model;
 
 import java.util.Scanner;
 
+import static game.model.Puissance4.Mouvement.*;
+
 /**
  * Created by brice on 19/12/16.
  */
 public class Puissance4 {
     private int grille[][]  ;
     private boolean p1 ;
+    enum Mouvement {DROITE,BAS,BASGAUCHE,BASDROITE};
 
     public Puissance4(){
         grille = new int [6][7];
-        p1 = true ;
+        p1 = false ;
 
         for(int i =0 ; i < 6 ; i++){
             for (int j = 0 ; j < 7 ; j++){
@@ -19,6 +22,15 @@ public class Puissance4 {
             }
         }
 
+    }
+
+    public Puissance4(Puissance4 copie){
+        this.p1 = copie.p1;
+        for(int i =0 ; i < 6 ; i++){
+            for (int j = 0 ; j < 7 ; j++){
+                grille[i][j] = copie.grille[i][j];
+            }
+        }
     }
 
     public void afficherJeu(){
@@ -35,6 +47,11 @@ public class Puissance4 {
         }catch(Exception e ){
             col = 9;
         }
+        mouvement(col);
+    }
+
+    public void mouvement(int col) {
+        int ligne = 0;
         if(col >= 0 && col <= 6){
             while (ligne < 6 && grille[ligne][col] != 0) {
                 ligne++;
@@ -46,12 +63,12 @@ public class Puissance4 {
             } else {
                 grille[ligne][col] = 2;
             }
-            afficherJeu();
             p1 = !p1;
         }else{
             System.out.println("\ncoup impossible rejouez\n");
             tour();
         }
+
     }
 
     public String toString(){
@@ -80,6 +97,12 @@ public class Puissance4 {
     public void play(){
         while(!end()){
             tour();
+            afficherJeu();
+        }
+        if(p1){
+            System.out.println("P1 WIN");
+        }else{
+            System.out.println("P2 WIN");
         }
     }
 
@@ -91,8 +114,16 @@ public class Puissance4 {
 
         boolean end = false;
 
+        for(int i = 0; i < 6 ;i++){
+            for(int j = 0; j < 7;j++){
+                if(grille[i][j] == 0)
+                    end = false;
+            }
+        }
+
         while(ligne < 6 && !end){
-            while(col < 6 && !end){
+            col = 0;
+            while(col < 7 && !end){
                if(grille[ligne][col] != 0) {
                    val = grille[ligne][col];
                    if(suite(ligne,col,val) == 4){
@@ -103,25 +134,54 @@ public class Puissance4 {
             }
             ligne++;
         }
+
+
+
         return end;
     }
 
     public int suite(int ligne,int col,int val){
-        int max = 1;
-        for(int i =  col - 1; i < col +2 ; i++ ){
-            if(i >= 0 && i <= 6) {
-                if (grille[ligne+1][i] == val) {
-                    if (1 + suite(ligne+1, i, val) > max)
-                        max = 1 + suite(ligne+1, i, val);
+        int max;
+        max = 1+ Math.max(suiteMouvement(ligne+1,col-1,val,BASGAUCHE),
+                Math.max(suiteMouvement(ligne+1,col+1,val,BASDROITE),
+                Math.max(suiteMouvement(ligne,col+1,val,DROITE),suiteMouvement(ligne+1,col,val,BAS))));
+
+       // System.out.println("\nval : "+val+"\nmax : "+max);
+        return  max;
+    }
+
+    public int suiteMouvement(int ligne,int col,int val,Mouvement mouv){
+        int max = 0 ;
+        if (ligne >= 0 && ligne <= 5 && col >= 0 && col <= 6) {
+            if (grille[ligne][col] == val) {
+                max = 1;
+                switch (mouv) {
+                    case DROITE:
+                        if (col + 1 >= 0 && col + 1 <= 6)
+                            max = 1 + suiteMouvement(ligne, col + 1, val, mouv);
+                        break;
+                    case BAS:
+                        if (ligne + 1 >= 0 && ligne + 1 <= 5) {
+                            max = 1 + suiteMouvement(ligne + 1, col, val, mouv);
+                        }
+                        break;
+                    case BASGAUCHE:
+                        if (ligne + 1 >= 0 && ligne + 1 <= 5 && col - 1 >= 0 && col - 1 <= 6) {
+                            max = 1 + suiteMouvement(ligne + 1, col - 1, val, mouv);
+                        }
+                        break;
+                    case BASDROITE:
+                        if (ligne + 1 >= 0 && ligne + 1 <= 5 && col + 1 >= 0 && col + 1 <= 6) {
+                            max = 1 + suiteMouvement(ligne + 1, col + 1, val, mouv);
+                        }
+                        break;
                 }
             }
         }
-        if(col+1 < 7) {
-            if (grille[ligne][col+1] == val) {
-                if (1+ suite(ligne, col+1, val) > max)
-                    max = 1 + suite(ligne , col+1, val);
-            }
-        }
         return max;
+    }
+
+    public boolean isP1(){
+        return p1;
     }
 }

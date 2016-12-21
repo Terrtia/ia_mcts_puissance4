@@ -1,5 +1,9 @@
 package game.graph;
 
+import game.model.Puissance4;
+
+import java.util.Random;
+
 /**
  * Classe de création des arêtes pour les graphes
  *
@@ -11,6 +15,10 @@ public class Edge {
    private int to;
    private int cost;
    private int uMinCost; //valeur du chemin de cout minimal pour le sommet u
+
+    private int nbWin;
+    private int nbSimulation;
+    private Puissance4 state;
    
    /**
     * Constructeur
@@ -18,10 +26,13 @@ public class Edge {
     * @param y - numéro du sommet d'arrivée
     * @param cost - valeur
     */
-   public Edge(int x, int y, int cost) {
+   public Edge(int x, int y, int cost,Puissance4 newState) {
 		this.from = x;
 		this.to = y;
 		this.cost = cost;
+        state = new Puissance4(newState);
+       nbWin = 0;
+       nbSimulation = 0;
    }
    
    /****************************** GET FUNCTION *******************/
@@ -75,6 +86,18 @@ public class Edge {
    
    public int getVMinCost() {
 	   return this.getTo();
+   }
+
+   public int simulation (){
+       Random rand = new Random();
+       while(!state.end()){
+           state.mouvement( rand.nextInt(7));
+       }
+       if(state.isP1()) {
+           return 0;
+       }else{
+           return 1;
+       }
    }
    
 }
