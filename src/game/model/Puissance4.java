@@ -11,6 +11,8 @@ public class Puissance4 {
     private int grille[][]  ;
     private boolean p1 ;
     enum Mouvement {DROITE,BAS,BASGAUCHE,BASDROITE};
+    public enum End {NO,DRAW,P1,P2};
+    private End  end;
 
     public Puissance4(){
         grille = new int [6][7];
@@ -21,7 +23,7 @@ public class Puissance4 {
                 grille[i][j] = 0;
             }
         }
-
+        end = End.NO;
     }
 
     public Puissance4(Puissance4 copie){
@@ -31,6 +33,7 @@ public class Puissance4 {
                 grille[i][j] = copie.grille[i][j];
             }
         }
+        end = copie.getEnd();
     }
 
     public void afficherJeu(){
@@ -95,49 +98,56 @@ public class Puissance4 {
     }
 
     public void play(){
-        while(!end()){
+        while(getEnd()==End.NO){
             tour();
             afficherJeu();
+            end();
         }
-        if(p1){
+        if(this.getEnd() == End.P1){
             System.out.println("P1 WIN");
-        }else{
+        }else if(this.getEnd() == End.P2){
             System.out.println("P2 WIN");
+        }else{
+            System.out.println("DRAW");
         }
     }
 
-    public boolean end(){
+    public void end(){
         int ligne = 0;
-        int col = 0;
-        int sum = 0;
+        int col;
         int val;
 
-        boolean end = false;
+        boolean draw = true;
 
         for(int i = 0; i < 6 ;i++){
             for(int j = 0; j < 7;j++){
-                if(grille[i][j] == 0)
-                    end = false;
+                if(grille[i][j] == 0) {
+                    draw = false;
+                }
             }
         }
 
-        while(ligne < 6 && !end){
+        if(draw) {
+            setEnd(End.DRAW);
+        }
+
+        while(ligne < 6 && getEnd()==End.NO) {
             col = 0;
-            while(col < 7 && !end){
-               if(grille[ligne][col] != 0) {
-                   val = grille[ligne][col];
-                   if(suite(ligne,col,val) == 4){
-                       end = true;
-                   }
-               }
-               col++;
+            while (col < 7 && getEnd() == End.NO) {
+                if (grille[ligne][col] != 0) {
+                    val = grille[ligne][col];
+                    if (suite(ligne, col, val) == 4) {
+                        if (p1) {
+                            setEnd(End.P1);
+                        } else {
+                            setEnd(End.P2);
+                        }
+                    }
+                }
+                col++;
             }
             ligne++;
         }
-
-
-
-        return end;
     }
 
     public int suite(int ligne,int col,int val){
@@ -179,6 +189,14 @@ public class Puissance4 {
             }
         }
         return max;
+    }
+
+    public End getEnd() {
+        return end;
+    }
+
+    public void setEnd(End newEnd) {
+        end = newEnd;
     }
 
     public boolean isP1(){

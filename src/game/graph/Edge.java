@@ -90,14 +90,20 @@ public class Edge {
 
    public int simulation (){
        Random rand = new Random();
-       while(!state.end()){
+       while(state.getEnd() == Puissance4.End.NO){
            state.mouvement( rand.nextInt(7));
        }
-       if(state.isP1()) {
+       if(state.getEnd() == Puissance4.End.DRAW || state.getEnd() == Puissance4.End.P1) {
            return 0;
        }else{
            return 1;
        }
+   }
+
+   public void mAJ(int victoire){
+       this.nbSimulation++;
+       this.nbWin++;
+       if(this.get)
    }
    
 }
