@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="module_ia_mcts_puissance4" default="compile.module.ia_mcts_puissance4">
+  <dirname property="module.ia_mcts_puissance4.basedir" file="${ant.file.module_ia_mcts_puissance4}"/>
+  
+  <property name="module.jdk.home.ia_mcts_puissance4" value="${project.jdk.home}"/>
+  <property name="module.jdk.bin.ia_mcts_puissance4" value="${project.jdk.bin}"/>
+  <property name="module.jdk.classpath.ia_mcts_puissance4" value="${project.jdk.classpath}"/>
+  
+  <property name="compiler.args.ia_mcts_puissance4" value="-encoding UTF-8 -source 8 -target 8 ${compiler.args}"/>
+  
+  <property name="ia_mcts_puissance4.output.dir" value="${module.ia_mcts_puissance4.basedir}/out/production/ia_mcts_puissance4"/>
+  <property name="ia_mcts_puissance4.testoutput.dir" value="${module.ia_mcts_puissance4.basedir}/out/test/ia_mcts_puissance4"/>
+  
+  <path id="ia_mcts_puissance4.module.bootclasspath">
+    <!-- Paths to be included in compilation bootclasspath -->
+  </path>
+  
+  <path id="ia_mcts_puissance4.module.production.classpath">
+    <path refid="${module.jdk.classpath.ia_mcts_puissance4}"/>
+  </path>
+  
+  <path id="ia_mcts_puissance4.runtime.production.module.classpath">
+    <pathelement location="${ia_mcts_puissance4.output.dir}"/>
+  </path>
+  
+  <path id="ia_mcts_puissance4.module.classpath">
+    <path refid="${module.jdk.classpath.ia_mcts_puissance4}"/>
+    <pathelement location="${ia_mcts_puissance4.output.dir}"/>
+  </path>
+  
+  <path id="ia_mcts_puissance4.runtime.module.classpath">
+    <pathelement location="${ia_mcts_puissance4.testoutput.dir}"/>
+    <pathelement location="${ia_mcts_puissance4.output.dir}"/>
+  </path>
+  
+  
+  <patternset id="excluded.from.module.ia_mcts_puissance4">
+    <patternset refid="ignored.files"/>
+  </patternset>
+  
+  <patternset id="excluded.from.compilation.ia_mcts_puissance4">
+    <patternset refid="excluded.from.module.ia_mcts_puissance4"/>
+  </patternset>
+  
+  <path id="ia_mcts_puissance4.module.sourcepath">
+    <dirset dir="${module.ia_mcts_puissance4.basedir}">
+      <include name="src"/>
+    </dirset>
+  </path>
+  
+  
+  <target name="compile.module.ia_mcts_puissance4" depends="compile.module.ia_mcts_puissance4.production,compile.module.ia_mcts_puissance4.tests" description="Compile module ia_mcts_puissance4"/>
+  
+  <target name="compile.module.ia_mcts_puissance4.production" depends="register.custom.compilers" description="Compile module ia_mcts_puissance4; production classes">
+    <mkdir dir="${ia_mcts_puissance4.output.dir}"/>
+    <javac2 destdir="${ia_mcts_puissance4.output.dir}" debug="${compiler.debug}" nowarn="${compiler.generate.no.warnings}" memorymaximumsize="${compiler.max.memory}" fork="true" executable="${module.jdk.bin.ia_mcts_puissance4}/javac">
+      <compilerarg line="${compiler.args.ia_mcts_puissance4}"/>
+      <bootclasspath refid="ia_mcts_puissance4.module.bootclasspath"/>
+      <classpath refid="ia_mcts_puissance4.module.production.classpath"/>
+      <src refid="ia_mcts_puissance4.module.sourcepath"/>
+      <patternset refid="excluded.from.compilation.ia_mcts_puissance4"/>
+    </javac2>
+    
+    <copy todir="${ia_mcts_puissance4.output.dir}">
+      <fileset dir="${module.ia_mcts_puissance4.basedir}/src">
+        <patternset refid="compiler.resources"/>
+        <type type="file"/>
+      </fileset>
+    </copy>
+  </target>
+  
+  <target name="compile.module.ia_mcts_puissance4.tests" depends="register.custom.compilers,compile.module.ia_mcts_puissance4.production" description="compile module ia_mcts_puissance4; test classes" unless="skip.tests"/>
+  
+  <target name="clean.module.ia_mcts_puissance4" description="cleanup module">
+    <delete dir="${ia_mcts_puissance4.output.dir}"/>
+    <delete dir="${ia_mcts_puissance4.testoutput.dir}"/>
+  </target>
+</project>

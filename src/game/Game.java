@@ -9,7 +9,7 @@ public class Game {
     public Game(){
         Puissance4 p = new Puissance4();
         p.afficherJeu();
-        p.play();
+        p.playIA();
     }
 
     public static void main (String[] args){

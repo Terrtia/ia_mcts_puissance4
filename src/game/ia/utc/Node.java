@@ -1,4 +1,4 @@
-package game.ia;
+package game.ia.utc;
 
 import game.model.Puissance4;
 
@@ -10,10 +10,10 @@ import java.util.Random;
  *
  */
 
-public class Edge {
+public class Node {
 
-    private Edge pere;
-    private ArrayList<Edge> filsListe;
+    private Node pere;
+    private ArrayList<Node> filsListe;
     private int nbWin;
     private int nbSimulation;
     private Puissance4 state;
@@ -22,7 +22,7 @@ public class Edge {
 
    
 
-   public Edge(Puissance4 newState) {
+   public Node(Puissance4 newState) {
        state = new Puissance4(newState);
        nbWin = 0;
        nbSimulation = 0;
@@ -30,7 +30,7 @@ public class Edge {
        filsListe = new ArrayList<>();
    }
 
-    public Edge(int newMouvement,Edge newPere,Puissance4 newState) {
+    public Node(int newMouvement, Node newPere, Puissance4 newState) {
         pere = newPere;
         state = new Puissance4(newState);
         nbWin = 0;
@@ -40,119 +40,7 @@ public class Edge {
         filsListe = new ArrayList<>();
     }
 
-
-   public int simulation (){
-       Random rand = new Random();
-       int move;
-       Puissance4 copie = new Puissance4(state);
-       copie.end();
-       while(copie.getEnd() == Puissance4.End.NO){
-           move = rand.nextInt(7);
-           if(copie.mouvementValide(move)) {
-               copie.mouvement(move);
-               copie.end();
-           }
-       }
-       if(copie.getEnd() == Puissance4.End.DRAW || copie.getEnd() == Puissance4.End.P1) {
-
-           return 0;
-
-       }else{
-           return 1;
-       }
-   }
-
-    public int simulationGagnante (){
-        Random rand = new Random();
-        int move;
-        int i =0;
-        Puissance4 copie = new Puissance4(state);
-        Puissance4 copie2 = new Puissance4(copie) ;
-        copie.end();
-        copie2.end();
-        if(copie.getEnd() == Puissance4.End.NO) {
-            while (copie2.getEnd() == Puissance4.End.NO && i < 7) {
-                copie2 = new Puissance4(copie);
-                if (copie2.mouvementValide(i)) {
-                    copie2.mouvement(i);
-                    copie2.end();
-                }
-                i++;
-            }
-
-            if (copie2.getEnd() == Puissance4.End.NO) {
-                while (copie.getEnd() == Puissance4.End.NO) {
-                    move = rand.nextInt(7);
-                    while (!copie.mouvementValide(move)) {
-                        move = rand.nextInt(7);
-                    }
-                    copie.mouvement(move);
-                    copie.end();
-                }
-            } else {
-                move = i - 1;
-                copie.mouvement(move);
-                copie.end();
-            }
-        }
-        if(copie.getEnd() == Puissance4.End.P2) {
-            return 1;
-        }else{
-            return 0;
-        }
-    }
-
-   public void maj(int victoire){
-       this.nbSimulation++;
-       this.nbWin += victoire;
-       if(this.getPere()!= null)
-           getPere().maj(victoire);
-   }
-
-    public Edge getPere() {
-        return pere;
-    }
-
-    public int getNbSimulation(){
-        return nbSimulation;
-    }
-
-    public double getBeta(){
-        double beta;
-        if(getPere() == null){
-            beta = 1;
-        }else {
-            if (isIa()) {
-                beta = (double)(nbWin / nbSimulation) + Math.sqrt(2) * Math.sqrt(Math.log(getPere().getNbSimulation()) / Math.log(getNbSimulation()));
-            } else {
-                beta = -((double)(nbWin / nbSimulation) + Math.sqrt(2) * Math.sqrt(Math.log(getPere().getNbSimulation()) / Math.log(getNbSimulation())));
-            }
-        }
-            return beta;
-    }
-
-    public boolean isIa() {
-        return ia;
-    }
-
-    public int getBestMovement() {
-        double max = -1;
-        int bestMovement = 9;
-        for(Edge fils : filsListe){
-            if ((double)fils.nbWin/fils.nbSimulation > max){
-                max = (double)fils.nbWin/fils.nbSimulation;
-                bestMovement = fils.getMouvement();
-            }
-        }
-        System.out.println("NB Simulation = "+nbSimulation+"\nProba de victoire = "+ max);
-        return bestMovement;
-    }
-
-    public int getMouvement() {
-        return mouvement;
-    }
-
-    public Edge selection() {
+    public Node selection() {
         this.state.end();
         int filsPossible =0;
         if(this.state.getEnd()!= Puissance4.End.NO) {
@@ -179,11 +67,7 @@ public class Edge {
         }
     }
 
-    private Edge getFils(int i) {
-        return filsListe.get(i);
-    }
-
-    public Edge developpe() {
+    public Node developpe() {
         this.state.end();
         if(this.state.getEnd()== Puissance4.End.NO){
 
@@ -191,7 +75,7 @@ public class Edge {
             for (int i = 0; i < 7; i ++){
                 moveList.add(i);
             }
-            for(Edge e : filsListe){
+            for(Node e : filsListe){
                 moveList.remove((Object)e.getMouvement());
             }
 
@@ -204,13 +88,131 @@ public class Edge {
                 moveList.remove((Object)move);
                 move = moveList.get(rand.nextInt(moveList.size()));
             }
+
             copie.mouvement(move);
 
-            Edge newFils = new Edge(move,this,copie);
+            Node newFils = new Node(move,this,copie);
             this.filsListe.add(newFils);
             return newFils;
         }else{
             return this;
         }
+    }
+
+   public int simulation (){
+       Random rand = new Random();
+       int move;
+       Puissance4 copie = new Puissance4(state);
+       copie.end();
+       while(copie.getEnd() == Puissance4.End.NO){
+           move = rand.nextInt(7);
+           if(copie.mouvementValide(move)) {
+               copie.mouvement(move);
+               copie.end();
+           }
+       }
+       if(copie.getEnd() == Puissance4.End.P2 ) {
+           return 1;
+       }else{
+           return 0;
+       }
+   }
+
+    public int simulationGagnante (){
+        Random rand = new Random();
+        int move;
+        int i =0;
+        Puissance4 copie = new Puissance4(state);
+        Puissance4 copie2 = new Puissance4(copie) ;
+        copie.end();
+        copie2.end();
+
+        while (copie.getEnd() == Puissance4.End.NO) {
+            while (copie2.getEnd() == Puissance4.End.NO && i < 7) {
+                copie2 = new Puissance4(copie);
+                if (copie2.mouvementValide(i)) {
+                    copie2.mouvement(i);
+                    copie2.end();
+                }
+                i++;
+            }
+
+            if(copie2.getEnd() == Puissance4.End.NO){
+                move = rand.nextInt(7);
+                while (!copie.mouvementValide(move)) {
+                    move = rand.nextInt(7);
+                }
+                copie.mouvement(move);
+                copie.end();
+            } else {
+                move = i - 1;
+                copie.mouvement(move);
+            }
+            i = 0;
+            copie.end();
+        }
+        copie.end();
+        if(copie.getEnd() == Puissance4.End.P2) {
+            return 1;
+        }else{
+            return 0;
+        }
+    }
+
+   public void maj(int victoire){
+       this.nbSimulation++;
+       this.nbWin = this.nbWin + victoire;
+       if(this.getPere()!= null) {
+           getPere().maj(victoire);
+       }
+   }
+
+    public int getBestMovement() {
+        double max = -1;
+        int bestMovement = 9;
+        for(Node fils : filsListe){
+            //System.out.println("FILS "+fils.getMouvement()+" NB SIM = "+fils.nbSimulation);
+            if ((double)fils.nbWin/fils.nbSimulation > max){
+                max = (double)fils.nbWin/fils.nbSimulation;
+                bestMovement = fils.getMouvement();
+            }
+        }
+        System.out.println("NB Simulation = "+nbSimulation+"\nProba de victoire = "+ max);
+        return bestMovement;
+    }
+
+    public Node getPere() {
+        return pere;
+    }
+
+    public int getNbSimulation(){
+        return nbSimulation;
+    }
+
+    public double getBeta(){
+        double beta;
+        double mu;
+        if(getPere() == null){
+            beta = 1;
+        }else {
+            mu =  (double)(nbWin / nbSimulation);
+            beta = mu + (Math.sqrt(2) * Math.sqrt(Math.log(getPere().getNbSimulation()) / Math.log(getNbSimulation())));
+            if (!isIa()) {
+                beta = -(beta);
+            }
+        }
+            return beta;
+    }
+
+    public boolean isIa() {
+        return ia;
+    }
+
+    public int getMouvement() {
+        return mouvement;
+    }
+
+    private Node getFils(int i) {
+        return filsListe.get(i);
     }
 }
