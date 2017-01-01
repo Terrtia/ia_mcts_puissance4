@@ -4,7 +4,7 @@ import game.ia.IA;
 import game.model.Puissance4;
 
 /**
- * Created by brice on 30/12/16.
+ * Algo UCT
  */
 public class UTC implements IA {
     private Node root;
@@ -13,6 +13,10 @@ public class UTC implements IA {
         this.root = new Node(stateRoot);
     }
 
+    /**
+     * Recherche du meilleur coup à jouer
+     * @return
+     */
     public int getMouvement(){
         long start = System.currentTimeMillis();
         long time = 0;

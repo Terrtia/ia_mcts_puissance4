@@ -3,12 +3,12 @@ package game;
 import game.model.Puissance4;
 
 /**
- * Created by brice on 19/12/16.
+ * main class
  */
 public class Game {
     public Game(){
         Puissance4 p = new Puissance4();
-        p.afficherJeu();
+        p.afficherJeu(); //affichage du plateau de jeu sur la console
         p.playIA();
     }
 

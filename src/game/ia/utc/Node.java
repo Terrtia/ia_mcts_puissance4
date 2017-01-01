@@ -7,7 +7,6 @@ import java.util.Random;
 
 /**
  * Classe de création des arêtes pour les graphes
- *
  */
 
 public class Node {
@@ -167,6 +166,9 @@ public class Node {
        }
    }
 
+    /**
+     * @return numero de la colonne ou jouer le coup
+     */
     public int getBestMovement() {
         double max = -1;
         int bestMovement = 9;
@@ -189,6 +191,9 @@ public class Node {
         return nbSimulation;
     }
 
+    /**
+     * Calcul le beta du noeud
+     */
     public double getBeta(){
         double beta;
         double mu;
@@ -196,10 +201,10 @@ public class Node {
             beta = 1;
         }else {
             mu =  (double)(nbWin / nbSimulation);
-            beta = mu + (Math.sqrt(2) * Math.sqrt(Math.log(getPere().getNbSimulation()) / Math.log(getNbSimulation())));
-            if (!isIa()) {
-                beta = -(beta);
+            if (isIa()) {
+                mu = -(mu);
             }
+            beta = mu + (Math.sqrt(2) * Math.sqrt(Math.log(getPere().getNbSimulation()) / Math.log(getNbSimulation())));
         }
             return beta;
     }

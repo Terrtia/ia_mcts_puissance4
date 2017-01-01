@@ -4,9 +4,9 @@
   
   <property file="ia_mcts_puissance4.properties"/>
   <!-- Uncomment the following property if no tests compilation is needed -->
-
+  <!-- 
   <property name="skip.tests" value="true"/>
-
+   -->
   
   <!-- Compiler options -->
   
@@ -88,22 +88,88 @@
   <property name="project.jdk.home" value="${jdk.home.1.8}"/>
   <property name="project.jdk.bin" value="${jdk.bin.1.8}"/>
   <property name="project.jdk.classpath" value="jdk.classpath.1.8"/>
-  <!-- Register Custom Compiler Taskdefs -->
-  <property name="javac2.home" value="${idea.home}/lib"/>
-  <path id="javac2.classpath">
-    <pathelement location="${javac2.home}/javac2.jar"/>
-    <pathelement location="${javac2.home}/jdom.jar"/>
-    <pathelement location="${javac2.home}/asm-all.jar"/>
-    <pathelement location="${javac2.home}/jgoodies-forms.jar"/>
-  </path>
-  <target name="register.custom.compilers">
-    <taskdef name="javac2" classname="com.intellij.ant.Javac2" classpathref="javac2.classpath"/>
-    <taskdef name="instrumentIdeaExtensions" classname="com.intellij.ant.InstrumentIdeaExtensions" classpathref="javac2.classpath"/>
-  </target>
   
   <!-- Modules -->
   
-  <import file="${basedir}/module_ia_mcts_puissance4.xml"/>
+  
+  <!-- Module ia_mcts_puissance4 -->
+  
+  <dirname property="module.ia_mcts_puissance4.basedir" file="${ant.file}"/>
+  
+  
+  <property name="module.jdk.home.ia_mcts_puissance4" value="${project.jdk.home}"/>
+  <property name="module.jdk.bin.ia_mcts_puissance4" value="${project.jdk.bin}"/>
+  <property name="module.jdk.classpath.ia_mcts_puissance4" value="${project.jdk.classpath}"/>
+  
+  <property name="compiler.args.ia_mcts_puissance4" value="-encoding UTF-8 -source 8 -target 8 ${compiler.args}"/>
+  
+  <property name="ia_mcts_puissance4.output.dir" value="${module.ia_mcts_puissance4.basedir}/out/production/ia_mcts_puissance4"/>
+  <property name="ia_mcts_puissance4.testoutput.dir" value="${module.ia_mcts_puissance4.basedir}/out/test/ia_mcts_puissance4"/>
+  
+  <path id="ia_mcts_puissance4.module.bootclasspath">
+    <!-- Paths to be included in compilation bootclasspath -->
+  </path>
+  
+  <path id="ia_mcts_puissance4.module.production.classpath">
+    <path refid="${module.jdk.classpath.ia_mcts_puissance4}"/>
+  </path>
+  
+  <path id="ia_mcts_puissance4.runtime.production.module.classpath">
+    <pathelement location="${ia_mcts_puissance4.output.dir}"/>
+  </path>
+  
+  <path id="ia_mcts_puissance4.module.classpath">
+    <path refid="${module.jdk.classpath.ia_mcts_puissance4}"/>
+    <pathelement location="${ia_mcts_puissance4.output.dir}"/>
+  </path>
+  
+  <path id="ia_mcts_puissance4.runtime.module.classpath">
+    <pathelement location="${ia_mcts_puissance4.testoutput.dir}"/>
+    <pathelement location="${ia_mcts_puissance4.output.dir}"/>
+  </path>
+  
+  
+  <patternset id="excluded.from.module.ia_mcts_puissance4">
+    <patternset refid="ignored.files"/>
+  </patternset>
+  
+  <patternset id="excluded.from.compilation.ia_mcts_puissance4">
+    <patternset refid="excluded.from.module.ia_mcts_puissance4"/>
+  </patternset>
+  
+  <path id="ia_mcts_puissance4.module.sourcepath">
+    <dirset dir="${module.ia_mcts_puissance4.basedir}">
+      <include name="src"/>
+    </dirset>
+  </path>
+  
+  
+  <target name="compile.module.ia_mcts_puissance4" depends="compile.module.ia_mcts_puissance4.production,compile.module.ia_mcts_puissance4.tests" description="Compile module ia_mcts_puissance4"/>
+  
+  <target name="compile.module.ia_mcts_puissance4.production" description="Compile module ia_mcts_puissance4; production classes">
+    <mkdir dir="${ia_mcts_puissance4.output.dir}"/>
+    <javac destdir="${ia_mcts_puissance4.output.dir}" debug="${compiler.debug}" nowarn="${compiler.generate.no.warnings}" memorymaximumsize="${compiler.max.memory}" fork="true" executable="${module.jdk.bin.ia_mcts_puissance4}/javac">
+      <compilerarg line="${compiler.args.ia_mcts_puissance4}"/>
+      <bootclasspath refid="ia_mcts_puissance4.module.bootclasspath"/>
+      <classpath refid="ia_mcts_puissance4.module.production.classpath"/>
+      <src refid="ia_mcts_puissance4.module.sourcepath"/>
+      <patternset refid="excluded.from.compilation.ia_mcts_puissance4"/>
+    </javac>
+    
+    <copy todir="${ia_mcts_puissance4.output.dir}">
+      <fileset dir="${module.ia_mcts_puissance4.basedir}/src">
+        <patternset refid="compiler.resources"/>
+        <type type="file"/>
+      </fileset>
+    </copy>
+  </target>
+  
+  <target name="compile.module.ia_mcts_puissance4.tests" depends="compile.module.ia_mcts_puissance4.production" description="compile module ia_mcts_puissance4; test classes" unless="skip.tests"/>
+  
+  <target name="clean.module.ia_mcts_puissance4" description="cleanup module">
+    <delete dir="${ia_mcts_puissance4.output.dir}"/>
+    <delete dir="${ia_mcts_puissance4.testoutput.dir}"/>
+  </target>
   
   <target name="init" description="Build initialization">
     <!-- Perform any build initialization in this target -->
@@ -113,5 +179,31 @@
   
   <target name="build.modules" depends="init, clean, compile.module.ia_mcts_puissance4" description="build all modules"/>
   
-  <target name="all" depends="build.modules" description="build all"/>
+  <target name="init.artifacts">
+    <property name="artifacts.temp.dir" value="${basedir}/__artifacts_temp"/>
+    <property name="artifact.output.ia_mcts_puissance4:jar" value="${basedir}/out/jar/ia_mcts_puissance4_jar"/>
+    <mkdir dir="${artifacts.temp.dir}"/>
+    <property name="temp.jar.path.ia_mcts_puissance4.jar" value="${artifacts.temp.dir}/ia_mcts_puissance4.jar"/>
+  </target>
+  
+  <target name="artifact.ia_mcts_puissance4:jar" depends="init.artifacts, compile.module.ia_mcts_puissance4" description="Build &#39;ia_mcts_puissance4:jar&#39; artifact">
+    <property name="artifact.temp.output.ia_mcts_puissance4:jar" value="${artifacts.temp.dir}/ia_mcts_puissance4_jar"/>
+    <mkdir dir="${artifact.temp.output.ia_mcts_puissance4:jar}"/>
+    <jar destfile="${temp.jar.path.ia_mcts_puissance4.jar}" duplicate="preserve" filesetmanifest="mergewithoutmain">
+      <zipfileset dir="${ia_mcts_puissance4.output.dir}"/>
+    </jar>
+    <copy file="${temp.jar.path.ia_mcts_puissance4.jar}" tofile="${artifact.temp.output.ia_mcts_puissance4:jar}/ia_mcts_puissance4.jar"/>
+  </target>
+  
+  <target name="build.all.artifacts" depends="artifact.ia_mcts_puissance4:jar" description="Build all artifacts">
+    <mkdir dir="${artifact.output.ia_mcts_puissance4:jar}"/>
+    <copy todir="${artifact.output.ia_mcts_puissance4:jar}">
+      <fileset dir="${artifact.temp.output.ia_mcts_puissance4:jar}"/>
+    </copy>
+    
+    <!-- Delete temporary files -->
+    <delete dir="${artifacts.temp.dir}"/>
+  </target>
+  
+  <target name="all" depends="build.modules, build.all.artifacts" description="build all"/>
 </project>
