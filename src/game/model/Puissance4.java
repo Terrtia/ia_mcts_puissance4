@@ -1,6 +1,6 @@
 package game.model;
 
-import game.ia.utc.UTC;
+import game.ia.mtcs.MTCS;
 
 import java.util.Scanner;
 
@@ -126,14 +126,14 @@ public class Puissance4 {
      * Gestion d'une partie contre une IA
      */
     public void playIA(){
-        UTC utc = new UTC(this);
+        MTCS mtcs = new MTCS(this);
 
         while(getEnd()==End.NO){
             if(!p1){ //tour du joueur humain
                 tour();
             }else{   //tour de l'IA
-                utc.setRoot(this);
-                this.mouvement(utc.getMouvement());
+                mtcs.setRoot(this);
+                this.mouvement(mtcs.getMouvement());
             }
             end();
         }

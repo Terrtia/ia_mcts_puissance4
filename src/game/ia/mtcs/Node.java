@@ -1,4 +1,4 @@
-package game.ia.utc;
+package game.ia.mtcs;
 
 import game.model.Puissance4;
 
